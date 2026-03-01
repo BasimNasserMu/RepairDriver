@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Technician Quote and Inspection Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#231a74",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#14131f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+<div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-xl">
+<!-- Header -->
+<div class="flex items-center bg-white dark:bg-[#1e1c2e] p-4 sticky top-0 z-10 shadow-sm">
+<button class="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Respond to Request</h2>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto pb-24">
+<!-- Customer Request Section -->
+<div class="bg-white dark:bg-[#1e1c2e] mb-2 pb-6">
+<div class="px-4 pt-5 pb-2">
+<div class="flex items-center gap-3 mb-4">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-center bg-cover" data-alt="Customer profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAUdQoP7HBMpkKo6ZjRsb3BI9UaR5MAzJdRZemd6YMItHOPjjWuJI0GuqstTUyP7-XUv9MbWTgrgGkT9TnNU9G7bhNz5eVzwbzQ5j8JkPGjOCBBR8YV9fa_TCqkyohLR5j8YCiwyoe3dbaMugXp-nNT3YpWKzUUmK2j_W_SYKZFnzEQiXIBNiX_N18jbKqACJ8rg-DScTZwLibFZ9owkrepAlW6lYlEg5xfea93uMuSuZ8tYyeZB_nQ48ie7Z4hbWRjAOnQ2b8WOCE");'></div>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Sarah Johnson</p>
+<div class="flex items-center text-xs text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px] mr-1">location_on</span>
+                                2.5 km away • Riyadh
+                            </div>
+</div>
+</div>
+<h2 class="text-slate-900 dark:text-white tracking-tight text-xl font-bold leading-tight text-left pb-2">Leaking pipe under sink</h2>
+<p class="text-slate-600 dark:text-slate-300 text-sm font-normal leading-relaxed">
+                        There is a leaking pipe under the kitchen sink. Water is dripping constantly and causing a puddle on the floor. It seems urgent.
+                    </p>
+</div>
+<!-- Images Grid -->
+<div class="w-full px-4 overflow-hidden">
+<div class="w-full gap-2 overflow-hidden bg-slate-100 dark:bg-slate-800 aspect-[3/2] rounded-xl grid grid-cols-[2fr_1fr_1fr]">
+<div class="w-full bg-center bg-no-repeat bg-cover aspect-auto rounded-l-lg row-span-2 relative group" data-alt="Close up of leaking pipe" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDZySTIAZh8EcxiFFadKfbVnAeSC1IYs4WrkPD7mY4QVhiZjilY4zTrWkazblUSNR-KaBSID3R-YbWKkJOTHm7OdQguhuw9-H3Zzy5b17LvbAYmrwxfuobHvb3qctqpE9adYm483he41nuPKg_HHsIiuBU_7cbAGCyBOn68QmcO3nHOPbvmxkzs0LfRVs0a0FtCogOkP6sgq6t3eMUeGIC__vBgg4xsZ8s3MENYeWeAj9I6sWewcuaRWk13sL_dOC4nA-nt-D00pSM");'>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+</div>
+<div class="w-full bg-center bg-no-repeat bg-cover aspect-auto rounded-tr-lg col-span-2 relative group" data-alt="Kitchen sink cabinet open" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBoFEi_ysclnuQSrmbq0eJQ0fpCiwOuvkzNJOeEyn5KQgpGKbNYzN5TUd-MxjIF4la0eKEl-qWVsl9jM19ghsyDUmIvnIZ3PMa-tub3uC3Eq3jwSdWTOfneX5NRmottSAimVTUCwn8KHJ9MbV6M0p_CUXZgnir7LOvcG6_d0nDLlBRgJEPmECW09u0skjyUPvHpMTHXovpQ9yul9a3pPCD30W1RpnzgQB-nBmUk8DIIILffxfRDxpUOQQd6m9ifl4v4kq09G3W0LUY");'>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+</div>
+<div class="w-full bg-center bg-no-repeat bg-cover aspect-auto rounded-br-lg col-span-2 relative group" data-alt="Water puddle on floor" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD3FT1lmJB9B6OOlKbW7gTiHGe32d-5aAff0NOgKSYdOyO2XKs6B1a3Q3kDKW1V4QfaVNyfvE762HbcURmoIawoKq5IWXDe42edl-ex119Xztco7tQnK7Slk_BtKlhEnEl4mWbE--ySFRxojOMJkTDyVzaNkji-sELFtF-A3-MFpX_lAk3SruVsIMrZqUj5JcNMxGkrVDnxo2xJmzs2wMx9ddEnxG6L3vxJST70cpPZS0e2JrKzA35m0VkaeC-n0u2ooG_1-dY0M30");'>
+<div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Response Options Header -->
+<div class="px-4 pt-6 pb-2">
+<h3 class="text-slate-900 dark:text-white tracking-tight text-lg font-bold leading-tight">Choose Response</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Select how you want to proceed with this request.</p>
+</div>
+<!-- Option 1: Direct Quote -->
+<div class="px-4 py-3">
+<label class="relative flex flex-col p-4 bg-white dark:bg-[#1e1c2e] border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-primary transition-colors group has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">attach_money</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white text-base">Send Direct Quote</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400">If the problem is clear from photos</p>
+</div>
+</div>
+<input checked="" class="text-primary focus:ring-primary border-slate-300" name="response_type" type="radio"/>
+</div>
+<div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+<label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Estimated Price (SAR)</label>
+<div class="relative rounded-md shadow-sm">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+<span class="text-slate-500 sm:text-sm">SAR</span>
+</div>
+<input class="block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-white pl-12 focus:border-primary focus:ring-primary py-2.5 sm:text-sm" id="price" name="price" placeholder="0.00" type="number"/>
+</div>
+</div>
+</label>
+</div>
+<!-- Option 2: Request Inspection -->
+<div class="px-4 py-3">
+<label class="relative flex flex-col p-4 bg-white dark:bg-[#1e1c2e] border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-primary transition-colors group has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
+<span class="material-symbols-outlined">search</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white text-base">Request Inspection</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400">Visit to diagnose the issue</p>
+</div>
+</div>
+<input class="text-primary focus:ring-primary border-slate-300" name="response_type" type="radio"/>
+</div>
+<div class="mt-3 pl-[3.25rem]">
+<div class="inline-flex items-center px-2.5 py-1 rounded-md bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 text-xs font-medium border border-green-100 dark:border-green-800/30">
+                            Fixed Fee: 50 SAR
+                        </div>
+</div>
+</label>
+</div>
+<div class="h-6"></div>
+</div>
+<!-- Fixed Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 bg-white dark:bg-[#1e1c2e] border-t border-slate-100 dark:border-slate-800">
+<div class="flex gap-3">
+<button class="flex-1 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white font-semibold h-12 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                    Decline
+                </button>
+<button class="flex-[2] rounded-xl bg-primary text-white font-bold h-12 flex items-center justify-center shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors">
+                    Send Response
+                </button>
+</div>
+</div>
+</div>
+</body></html>

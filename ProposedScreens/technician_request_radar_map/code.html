@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Technician Request Radar Map</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#231a74",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#14131f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden h-screen w-full relative">
+<!-- Top Navigation / Search Bar Overlay -->
+<div class="absolute top-0 left-0 right-0 z-20 px-4 pt-12 pb-4 bg-gradient-to-b from-white/90 to-transparent dark:from-background-dark/90 pointer-events-none">
+<div class="flex items-center justify-between pointer-events-auto gap-3">
+<div class="flex flex-1 items-center bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 h-12 px-4">
+<span class="material-symbols-outlined text-slate-400">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full text-slate-900 dark:text-white placeholder-slate-400" placeholder="Search area or zip code" type="text"/>
+</div>
+<button class="flex items-center justify-center w-12 h-12 bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-slate-800"></span>
+</button>
+</div>
+<!-- Filter chips -->
+<div class="flex gap-2 mt-3 overflow-x-auto no-scrollbar pointer-events-auto pb-2">
+<button class="px-4 py-2 bg-primary text-white text-xs font-semibold rounded-full shadow-md whitespace-nowrap">All Requests</button>
+<button class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-medium rounded-full shadow-sm border border-slate-100 dark:border-slate-700 whitespace-nowrap">Emergency</button>
+<button class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-medium rounded-full shadow-sm border border-slate-100 dark:border-slate-700 whitespace-nowrap">Scheduled</button>
+<button class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-medium rounded-full shadow-sm border border-slate-100 dark:border-slate-700 whitespace-nowrap">High Value</button>
+</div>
+</div>
+<!-- Map Background -->
+<div class="absolute inset-0 z-0 bg-slate-200 dark:bg-slate-900 w-full h-full bg-cover bg-center" data-alt="Map showing city streets and location markers" data-location="San Francisco" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDL1bJ-DmCYNPDoJ9gyIgqVOcYCIlykNZZE--upG6PenpQQMkOLYFkzmKZ_jW4JAqsji_uWcygmGQlLgcveCo0Mn8LUk16OtLcMfXkc5SrXDW-S6hKo5c7rUAUHUsq5m77K7Q3TWKoxakONdz91eOntKvV66-hFSA1clQnzahSl-vMIJdYMnU7CTGLJqoPZg47kVRRNjn4Ff38Qdnmsp8oe7wu8GVq6H4BrkE2iMlNuqBvaWdrXLOiX9IR9I24ZBb_Mf88k3jY6970');">
+<!-- Overlay to simulate map UI elements -->
+<!-- User Location Pin (Center) -->
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
+<div class="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
+<div class="w-4 h-4 bg-primary border-2 border-white rounded-full shadow-lg"></div>
+</div>
+</div>
+<!-- Nearby Request Pins -->
+<div class="absolute top-[40%] left-[20%]">
+<div class="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md flex items-center justify-center text-primary transform hover:scale-110 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-lg">bolt</span>
+</div>
+</div>
+<div class="absolute top-[30%] right-[25%]">
+<div class="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md flex items-center justify-center text-orange-500 transform hover:scale-110 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-lg">plumbing</span>
+</div>
+</div>
+<div class="absolute bottom-[45%] right-[15%]">
+<div class="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md flex items-center justify-center text-blue-500 transform hover:scale-110 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-lg">water_drop</span>
+</div>
+</div>
+<!-- Map Controls -->
+<div class="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-3">
+<button class="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg shadow-md flex items-center justify-center text-slate-700 dark:text-slate-200">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+<button class="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg shadow-md flex items-center justify-center text-slate-700 dark:text-slate-200">
+<span class="material-symbols-outlined">layers</span>
+</button>
+</div>
+</div>
+<!-- Bottom Sheet Container -->
+<div class="absolute inset-x-0 bottom-0 z-30 flex flex-col h-[55%] pointer-events-none">
+<!-- Transparent top area to allow clicks through to map, but catch swipes if implemented -->
+<div class="flex-1"></div>
+<!-- Bottom Sheet Content -->
+<div class="bg-white dark:bg-slate-900 rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] flex flex-col h-full pointer-events-auto pb-20 overflow-hidden">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center pt-3 pb-2">
+<div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+</div>
+<!-- Header -->
+<div class="px-6 pb-4 flex justify-between items-end border-b border-slate-100 dark:border-slate-800">
+<div>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">Nearby Requests</h2>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">3 jobs available within 5km</p>
+</div>
+<button class="text-primary text-sm font-semibold hover:underline">View List</button>
+</div>
+<!-- Horizontal Scroll Cards -->
+<div class="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4">
+<!-- Card 1 -->
+<div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-3">
+<span class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">New</span>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start pr-12">
+<h3 class="font-bold text-slate-900 dark:text-white">Electrical Issue</h3>
+</div>
+<div class="flex items-center gap-1 mt-1 mb-2">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">2.5 km away</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-yellow-400 text-[14px]">star</span>
+<span class="text-xs font-medium text-slate-700 dark:text-slate-300 ml-0.5">4.8</span>
+</div>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-3">
+                                Main circuit breaker keeps tripping. Need urgent assistance to restore power to the kitchen area.
+                            </p>
+<div class="flex items-center justify-between mt-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+<span class="font-bold text-slate-900 dark:text-white">$85<span class="text-xs font-normal text-slate-500 dark:text-slate-400">/hr est.</span></span>
+<button class="bg-primary hover:bg-primary/90 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm shadow-primary/30">
+                                    View Details
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-3">
+<span class="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">Urgent</span>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 text-orange-500">
+<span class="material-symbols-outlined">plumbing</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start pr-12">
+<h3 class="font-bold text-slate-900 dark:text-white">Leaking Pipe</h3>
+</div>
+<div class="flex items-center gap-1 mt-1 mb-2">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">3.8 km away</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-yellow-400 text-[14px]">star</span>
+<span class="text-xs font-medium text-slate-700 dark:text-slate-300 ml-0.5">4.5</span>
+</div>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-3">
+                                Water leaking under the sink cabinet. Wood is starting to warp. Please bring replacement washers.
+                            </p>
+<div class="flex items-center justify-between mt-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+<span class="font-bold text-slate-900 dark:text-white">$90<span class="text-xs font-normal text-slate-500 dark:text-slate-400">/hr est.</span></span>
+<button class="bg-white dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 text-sm font-semibold py-2 px-4 rounded-lg transition-colors">
+                                    View Details
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Spacer for bottom nav visibility -->
+<div class="h-8"></div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="absolute bottom-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-6 py-2 pb-5 shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
+<div class="flex justify-between items-center">
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 group" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:-translate-y-0.5 transition-transform">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary dark:text-indigo-400 group" href="#">
+<span class="material-symbols-outlined text-[24px] font-variation-settings-fill transition-transform">map</span>
+<span class="text-[10px] font-medium">Radar</span>
+</a>
+<div class="relative -top-6">
+<button class="w-14 h-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 flex items-center justify-center transform hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 group" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:-translate-y-0.5 transition-transform">work</span>
+<span class="text-[10px] font-medium">Jobs</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 group" href="#">
+<span class="material-symbols-outlined text-[24px] group-hover:-translate-y-0.5 transition-transform">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</div>
+<!-- Custom CSS for Material Symbols Fill variation -->
+<style>
+        .font-variation-settings-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</body></html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live Tracking and Chat Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#231a74",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#14131f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-hidden h-screen flex flex-col">
+<!-- Header / Status Bar -->
+<header class="flex-none bg-white dark:bg-[#1e1c2e] shadow-sm z-20">
+<div class="flex items-center p-4 justify-between">
+<button class="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back</span>
+</button>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Tracking</h2>
+</div>
+<div class="px-4 pb-4 text-center">
+<div class="inline-flex items-center gap-2 bg-green-50 dark:bg-green-900/20 px-3 py-1 rounded-full mb-2">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+</span>
+<span class="text-green-700 dark:text-green-300 text-xs font-semibold uppercase tracking-wider">Live Status</span>
+</div>
+<h1 class="text-primary dark:text-white text-2xl font-bold leading-tight">Technician is on the way</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Arriving in approx. 5 mins</p>
+</div>
+</header>
+<!-- Main Content Area: Split View -->
+<main class="flex-1 flex flex-col relative overflow-hidden">
+<!-- Map Section (Top Half) -->
+<div class="flex-1 relative w-full h-1/2 bg-slate-200 dark:bg-slate-800">
+<!-- Map Background Image -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Digital map showing city streets and location markers" data-location="New York City" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDgRNp9cEywwma5q3EmjGnWKZQ47UgePgfU0Zivn1eVQNH6SfYIG0d_DR7qoC2r2gAyJy621MxpFoRCpG1q-HFflduPf84Xfmxg40H1iXr89kuuckNUXTJE6mV8tW-x6EZ7Nn-nnj4GBMcynfuB25oZ-WrTNT07Rt5_Kindv6uColapUsLMoajWvOKyFYa5epmcq9BVcPGcf63yMowuj9YrsfYP2aQ4-yOQaucnYRy-N9Q54cgHWcP5QrZOcFCXCUAOXC6CIzq_Opc'); filter: grayscale(20%) contrast(1.1);">
+</div>
+<!-- Map Overlay Gradients for readability -->
+<div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background-light dark:to-background-dark/90"></div>
+<!-- Technician Marker (Simulated) -->
+<div class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<div class="relative">
+<div class="w-12 h-12 rounded-full border-4 border-white dark:border-background-dark shadow-lg overflow-hidden relative z-10">
+<img alt="Technician portrait" class="w-full h-full object-cover" data-alt="Portrait of a smiling technician" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6wxeRx-R9xc8AxdMACKumpl-bA1WYyLl0VMQFFoAdD3YswDmvRoLJd6QsYz3r6vUNjgK0magv82R9d6CvHoixu4uZl4q3EuKkZBZv94i2-s1ydpol__wCfQo5s_q5L2CIvC9esGxXBis-yjFx8APToINPx_Whj_9NaYMVEITq-8xOqo9AmhQeRUwNyVgaR54shag1DGQjge_xsMzF52yu2kXdwyxcsOthWcF4DoAyabSIkhHCu7sYs5vevLb2-UprTXRotwggOWw"/>
+</div>
+<div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 z-20 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
+                        John
+                    </div>
+</div>
+<!-- Pulsing Effect under marker -->
+<div class="w-4 h-4 bg-primary/30 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150 animate-ping"></div>
+</div>
+<!-- Floating Action Buttons on Map -->
+<div class="absolute right-4 bottom-4 flex flex-col gap-3">
+<button class="bg-white dark:bg-[#1e1c2e] text-primary p-3 rounded-full shadow-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">my_location</span>
+</button>
+</div>
+</div>
+<!-- Chat Section (Bottom Half) -->
+<div class="flex-none h-[45%] bg-background-light dark:bg-background-dark flex flex-col rounded-t-3xl -mt-6 relative z-10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] border-t border-white/50 dark:border-white/5">
+<!-- Drag Handle / Indicator -->
+<div class="w-full flex justify-center pt-3 pb-1">
+<div class="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+</div>
+<!-- Chat Header Info -->
+<div class="px-5 py-2 flex items-center justify-between border-b border-slate-200 dark:border-slate-800/50">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-cover bg-center shadow-sm" data-alt="Small portrait of technician John" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDHVknzWhgd-0ipiWGpG4-o4wuvSvCV6wYWKSZrWAIqKhmCkgA6AXh1ltCHSljWgBOusA_dCkiCKP4ww3St-lruOi6OzmYxh7sOT-z-FmWm5fJkooBaNdN2IEWgZek85SlTnUmuJbhlLIv-7GF5Rm8l7dUV-UG9L23_NZnFrSE9e77fGtv26Yo-4R_SfZB9XnG5X0-rGhrs_e0tgzn6_pGeFK_PTCYAFfA03ZwYfPcUFswoXfmE35s0r9Dhy7TNZ-EaF0yrmh_nmF8');"></div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-background-dark rounded-full"></div>
+</div>
+<div>
+<h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">John Technician</h3>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">star</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">4.9 • 150+ Repairs</span>
+</div>
+</div>
+</div>
+<button class="bg-primary/10 dark:bg-primary/20 text-primary p-2 rounded-full hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">call</span>
+</button>
+</div>
+<!-- Messages Area -->
+<div class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+<!-- Received Message -->
+<div class="flex items-end gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full w-8 h-8 shrink-0 shadow-sm" data-alt="Technician avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCdsZyrtxU1u9O4BwN3Rs6qYlRPkIZ915yymO3g-cP21SMSmFNk7t62vCQB0ezQvTk8Rm1rum5KxGC2B3ReDaW4cnJRisx4-o57S6Tkriz3FgQf7oUR3j6kq4SNbDnaqUYZ655A3e5luSIu8CYc_pzL57EFP0lVPSy6lGV_dgY6aAxHPJ2C5j2KG6F5iV0o2qr9WcqYAjv7bgOKnHW24fApYQIUcsyAHIdmGFFoyGnwdjjDvJ4op4dO0Rw9gSvMccTBMbH2m1UWx0U');"></div>
+<div class="flex flex-col gap-1 items-start max-w-[75%]">
+<div class="bg-white dark:bg-[#1e1c2e] text-slate-800 dark:text-slate-200 text-sm px-4 py-3 rounded-2xl rounded-bl-none shadow-sm border border-slate-100 dark:border-slate-800">
+                            I'm about 5 minutes away. Traffic is a bit heavy on Main St.
+                        </div>
+<span class="text-xs text-slate-400 ml-1">10:42 AM</span>
+</div>
+</div>
+<!-- Sent Message -->
+<div class="flex items-end gap-3 justify-end">
+<div class="flex flex-col gap-1 items-end max-w-[75%]">
+<div class="bg-primary text-white text-sm px-4 py-3 rounded-2xl rounded-br-none shadow-md">
+                            Great, the gate code is 1234. See you soon!
+                        </div>
+<span class="text-xs text-slate-400 mr-1">10:44 AM</span>
+</div>
+<div class="bg-center bg-no-repeat bg-cover rounded-full w-8 h-8 shrink-0 shadow-sm" data-alt="User avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDIFDCRw_57GU-BQKD1nTnVnd8LLdfzLohfUJdxZ7YlyvPZFqK9ECqRyhP0xJzvcC2son7Q3fezSznZP8edTrxILaj_CTRmqDxVCbUWoOWUs9JCKyCSRulhOGzem4QFetNSNG4gIxtHC6F3Vn6Grnqq3jIMab7q_R1Idj3a4xS2Cq6QqaUuVmarycmCL7YblCUKxe6I1lonYZ7nxbefoqproBW2J2x98OCjsRXG14q1UnyHJybe17H8UfsUQf-aKVCQysEG4Pb_g1I');"></div>
+</div>
+<!-- Received Message (Typing) -->
+<div class="flex items-end gap-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full w-8 h-8 shrink-0 shadow-sm" data-alt="Technician avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDaUEtIFS8JunVpq7mRP2zrb_lM44YxE6Np3YTRBUaBsRJpNinWkR5r3pwGfbLvMm_nRQ0pghD5rVLqCafGq-xj-jpFPcCtvAvmIwaQHS6UKL6QlbZZTH6q-vS0oDNFrkm6cmL9x04YlK-dCzmURvyfImqEm-ui8B8mPAZ_Lv-vz-wLIUK78ju36pOKNoxGRdXXk-dIe_lxtIKrjZowsISX4SkLYnT0dZDzYgO4M0nRxboCVtGxpJhMymRqRszpHKTRgj6d7BbsCmM');"></div>
+<div class="flex flex-col gap-1 items-start">
+<div class="bg-white dark:bg-[#1e1c2e] px-4 py-3 rounded-2xl rounded-bl-none shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-1 h-[42px]">
+<span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+<span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
+<span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-4 bg-white dark:bg-[#1e1c2e] border-t border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-full px-2 py-2">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors rounded-full">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<input class="bg-transparent border-none focus:ring-0 text-sm flex-1 text-slate-900 dark:text-white placeholder-slate-400" placeholder="Type a message..." type="text"/>
+<button class="bg-primary text-white p-2 rounded-full hover:bg-primary/90 transition-colors shadow-sm flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 20px;">send</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

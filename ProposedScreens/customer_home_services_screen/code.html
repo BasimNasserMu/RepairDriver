@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Home Services Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#231a74",
+                        "primary-light": "#e9e8f1", 
+                        "background-light": "#f6f6f8", 
+                        "background-dark": "#14131f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light font-display text-slate-900 antialiased overflow-x-hidden">
+<div class="relative flex h-full min-h-screen w-full flex-col max-w-md mx-auto bg-white shadow-xl overflow-hidden">
+<div class="flex items-center bg-primary px-5 pt-12 pb-6 justify-between rounded-b-3xl shadow-md z-10">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-12 border-2 border-white/20" data-alt="Portrait of a smiling user" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD4uyXoSPJBvra_iyxH9f24YKRFgnNu_tkSAFaHgnka8GEGD2kb-WRxI7RaAIlegLgUvwh8pWi5j6Sstc4WeqKIQBxirz3RyuWt8UQfZ8pyDboz27Lehm7e5H97g9PmcmYHZQ9l5N1TCMM7Z8zjENl1Q641Uxp_zP8dyMX10j-f5CDa6877weGOnwK-nWrPMdskxQzahZUYy9fMsiizBXqjKlTYNGZ6xewJGsM28lfzD5sb3DrOmEVivFghY2K07cbW7LEwPD5MgOk");'></div>
+<div class="absolute bottom-0 right-0 size-3 bg-green-400 border-2 border-primary rounded-full"></div>
+</div>
+<div class="flex flex-col">
+<p class="text-white/70 text-xs font-medium uppercase tracking-wide">Welcome Back</p>
+<h2 class="text-white text-xl font-bold leading-tight">Alex Johnson</h2>
+</div>
+</div>
+<button class="flex size-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-primary"></span>
+</button>
+</div>
+<div class="px-5 -mt-5 z-20">
+<label class="flex w-full items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-lg border border-slate-100">
+<span class="material-symbols-outlined text-slate-400">search</span>
+<input class="w-full bg-transparent text-slate-900 placeholder:text-slate-400 focus:outline-none text-sm font-medium" placeholder="Find a service (e.g. Plumbing)" type="text"/>
+<button class="flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</label>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar pb-24">
+<div class="mt-6 pl-5">
+<div class="flex items-center justify-between pr-5 mb-3">
+<h2 class="text-slate-900 text-lg font-bold">Special Offers</h2>
+<a class="text-primary text-sm font-semibold" href="#">See All</a>
+</div>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pr-5 pb-2">
+<div class="min-w-[280px] h-[140px] rounded-2xl bg-gradient-to-r from-primary to-blue-600 p-5 relative overflow-hidden text-white flex flex-col justify-center shadow-md shrink-0">
+<div class="absolute right-0 bottom-0 opacity-20 transform translate-x-1/4 translate-y-1/4">
+<span class="material-symbols-outlined text-[150px]">cleaning_services</span>
+</div>
+<span class="bg-white/20 px-2 py-1 rounded text-[10px] font-bold uppercase w-fit mb-2">Limited Time</span>
+<h3 class="text-xl font-bold leading-tight mb-1">20% Off <br/>Home Cleaning</h3>
+<p class="text-white/80 text-xs">Valid until Oct 30</p>
+</div>
+<div class="min-w-[280px] h-[140px] rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 p-5 relative overflow-hidden text-white flex flex-col justify-center shadow-md shrink-0">
+<div class="absolute right-0 bottom-0 opacity-20 transform translate-x-1/4 translate-y-1/4">
+<span class="material-symbols-outlined text-[150px]">build</span>
+</div>
+<span class="bg-white/20 px-2 py-1 rounded text-[10px] font-bold uppercase w-fit mb-2">New User</span>
+<h3 class="text-xl font-bold leading-tight mb-1">Free <br/>Consultation</h3>
+<p class="text-white/80 text-xs">For any repair work</p>
+</div>
+</div>
+</div>
+<div class="px-5 mt-6">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-slate-900 text-lg font-bold">Services</h2>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/30 active:bg-slate-50 transition-all aspect-square">
+<div class="size-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">water_drop</span>
+</div>
+<span class="text-slate-700 text-xs font-semibold">Plumbing</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/30 active:bg-slate-50 transition-all aspect-square">
+<div class="size-12 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">bolt</span>
+</div>
+<span class="text-slate-700 text-xs font-semibold">Electrical</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/30 active:bg-slate-50 transition-all aspect-square">
+<div class="size-12 rounded-full bg-cyan-50 text-cyan-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">ac_unit</span>
+</div>
+<span class="text-slate-700 text-xs font-semibold">HVAC</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/30 active:bg-slate-50 transition-all aspect-square">
+<div class="size-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">format_paint</span>
+</div>
+<span class="text-slate-700 text-xs font-semibold">Painting</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/30 active:bg-slate-50 transition-all aspect-square">
+<div class="size-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">carpenter</span>
+</div>
+<span class="text-slate-700 text-xs font-semibold">Carpentry</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm border border-slate-100 hover:border-primary/30 active:bg-slate-50 transition-all aspect-square">
+<div class="size-12 rounded-full bg-slate-50 text-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+</div>
+<span class="text-slate-700 text-xs font-semibold">More</span>
+</button>
+</div>
+</div>
+<div class="px-5 mt-6 mb-4">
+<h2 class="text-slate-900 text-lg font-bold mb-3">Active Job</h2>
+<div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+<div class="flex items-start justify-between mb-4 pl-2">
+<div>
+<span class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded mb-1">In Progress</span>
+<h3 class="font-bold text-slate-900">AC Repair Service</h3>
+<p class="text-xs text-slate-500">Order #24581 • Today, 2:00 PM</p>
+</div>
+<div class="bg-slate-100 p-2 rounded-full">
+<span class="material-symbols-outlined text-slate-600">ac_unit</span>
+</div>
+</div>
+<div class="flex items-center gap-3 pl-2 border-t border-slate-100 pt-3">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10" data-alt="Technician portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuClXGbjTujGHwh-NQxcC_8NSDGaksbI1XgIq8hSliwqpsx6FENfJWH6tVt5hpmlmC-1Ff7IogmSWUGRtyj821brlwVxkv6B_tVogBbXFjokCwrqM28fLR_k4Q6GQAqEnb0Xw5fzRTZj5JD8VphS2unfKGvanD0LbyV5WSO86mXqIEjLhsSs69aKGQsHJFOAYAi6c13iNXIUJXQwKErjA-4yA5L2YqKyTMYtQpVPb7KJwceFzE0E2kNF_AXMQkDElAynsvhgtiAPtTI");'></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-slate-900">Mike Wilson</p>
+<div class="flex items-center text-xs text-slate-500">
+<span class="material-symbols-outlined text-[14px] text-yellow-500 mr-1 filled">star</span>
+                                4.8 Rating
+                            </div>
+</div>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-primary/90 transition-colors">
+                            Track
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 w-full bg-white border-t border-slate-100 px-6 pb-6 pt-3 flex justify-between items-end z-30">
+<a class="flex flex-col items-center justify-center gap-1 text-primary group" href="#">
+<span class="material-symbols-outlined text-[28px] transition-transform group-hover:scale-110">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-[28px] transition-transform group-hover:scale-110">calendar_month</span>
+<span class="text-[10px] font-medium">Bookings</span>
+</a>
+<div class="relative -top-6">
+<button class="flex items-center justify-center size-14 rounded-full bg-primary text-white shadow-lg shadow-primary/30 hover:bg-primary/90 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-[28px] transition-transform group-hover:scale-110">chat_bubble</span>
+<span class="text-[10px] font-medium">Messages</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors group" href="#">
+<span class="material-symbols-outlined text-[28px] transition-transform group-hover:scale-110">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</div>
+</body></html>
