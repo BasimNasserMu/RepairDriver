@@ -1,22 +1,21 @@
 # RepairDriver — ريبير درايفر
 
-A home maintenance services marketplace connecting homeowners in Saudi Arabia with verified professional technicians — electricians, plumbers, HVAC, painters, carpenters, and more. The app is Arabic-first with full RTL support, and English is also available.
+A home maintenance services platform connecting homeowners in Saudi Arabia with verified professional technicians — electricians, plumbers, HVAC, painters, carpenters, and more. The app is Arabic-first with full RTL support, and English is also available.
 
 ## Features
 
 **Customer app**
 - Request a service with a description, photos, and location
-- Receive quotes or paid inspection requests from technicians
+- The platform prices each request and assigns a verified technician
 - Track the technician live on a map and chat for each request
 - Pay and leave a review; completed jobs carry a 14–30 day workmanship warranty
 
 **Technician app**
-- Request radar: see nearby service requests
-- Send direct quotes or inspection requests
-- Manage active jobs
-- Wallet and earnings, with a negative-balance system for cash jobs (10% platform commission; accounts below −200 SAR are suspended)
+- Assignments inbox: receive and confirm jobs assigned by the platform
+- Start and complete jobs, issue a warranty
+- Wallet and earnings, with a negative-balance system for cash jobs (15% platform commission; wallets at −200 SAR are suspended)
 
-**Admin dashboard** (planned): user verification, financial reports, dispute resolution
+**Admin dashboard** (planned): dispatch (pricing and assigning technicians), user verification, financial reports, dispute resolution
 
 ## Tech Stack
 
@@ -30,6 +29,7 @@ A home maintenance services marketplace connecting homeowners in Saudi Arabia wi
 ```
 RepairDriver.md      Product requirements document (PRD) and data schema
 ProposedScreens/     HTML/PNG design mockups for key screens
+supabase/migrations/ Database migrations (SQL)
 RepairDriverApp/     Expo mobile app (customer + technician)
   app/               Routes: auth/, customer/, technician/
   src/components/    Shared UI components
@@ -55,4 +55,4 @@ Then press `a` (Android), `i` (iOS), or `w` (web), or scan the QR code with Expo
 
 ## Status
 
-Early development. The app shell, authentication flow, navigation, UI components, and translations are in place. Most screens still show placeholder data. Next up: the Supabase schema and RLS, realtime chat and tracking, maps, payments, and the admin dashboard.
+Early development. The app shell, authentication flow, navigation, UI components, and translations are in place. Most screens still show placeholder data. Next up: the technician assignments inbox, wiring screens to Supabase, realtime chat and tracking, maps, and the admin dashboard.
