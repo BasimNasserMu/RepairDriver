@@ -3,6 +3,7 @@ import {
   View,
   Text,
   TextInput,
+  type TextInputInstance,
   TouchableOpacity,
   Alert,
 } from "react-native";
@@ -22,7 +23,7 @@ export default function OtpScreen() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(60);
-  const inputRefs = useRef<TextInput[]>([]);
+  const inputRefs = useRef<TextInputInstance[]>([]);
 
   useEffect(() => {
     const timer = setInterval(() => {

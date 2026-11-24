@@ -3,6 +3,7 @@ import {
   View,
   Text,
   ScrollView,
+  type ScrollViewInstance,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -144,7 +145,7 @@ function ChatView({
 }) {
   const { t } = useTranslation();
   const [message, setMessage] = useState("");
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
 
   const thread = DEMO_THREADS.find((t) => t.id === threadId);
 

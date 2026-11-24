@@ -53,7 +53,7 @@ There is no test runner or linter configured.
 
 ## Technology Stack
 
-- **Frontend:** Expo SDK 55, React Native 0.83, React 19, TypeScript, Expo Router
+- **Frontend:** Expo SDK 58, React Native 0.88, React 19.3, TypeScript 6, Expo Router
 - **Styling:** NativeWind v4 (Tailwind CSS 3) — Primary: `#231a73`, Secondary: `#eeeeee` (see `tailwind.config.js`)
 - **Backend:** Supabase (PostgreSQL, Auth, Realtime, Storage)
 - **Auth:** Phone OTP (implemented); Apple Sign-In, Google Sign-In planned

@@ -32,7 +32,7 @@ export default function CustomerLayout() {
         options={{
           title: t("customer.home"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+            <Ionicons name="home-outline" size={size} color={color as string} />
           ),
         }}
       />
@@ -41,7 +41,7 @@ export default function CustomerLayout() {
         options={{
           title: t("customer.bookings"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar-outline" size={size} color={color} />
+            <Ionicons name="calendar-outline" size={size} color={color as string} />
           ),
         }}
       />
@@ -60,7 +60,7 @@ export default function CustomerLayout() {
         options={{
           title: t("customer.messages"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubbles-outline" size={size} color={color} />
+            <Ionicons name="chatbubbles-outline" size={size} color={color as string} />
           ),
         }}
       />
@@ -69,7 +69,7 @@ export default function CustomerLayout() {
         options={{
           title: t("customer.profile"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+            <Ionicons name="person-outline" size={size} color={color as string} />
           ),
         }}
       />

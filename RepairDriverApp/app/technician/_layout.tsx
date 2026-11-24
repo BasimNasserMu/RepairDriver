@@ -32,7 +32,7 @@ export default function TechnicianLayout() {
         options={{
           title: t("technician.radar"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="radio-outline" size={size} color={color} />
+            <Ionicons name="radio-outline" size={size} color={color as string} />
           ),
         }}
       />
@@ -41,7 +41,7 @@ export default function TechnicianLayout() {
         options={{
           title: t("technician.jobs"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="briefcase-outline" size={size} color={color} />
+            <Ionicons name="briefcase-outline" size={size} color={color as string} />
           ),
         }}
       />
@@ -50,7 +50,7 @@ export default function TechnicianLayout() {
         options={{
           title: t("technician.wallet"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="wallet-outline" size={size} color={color} />
+            <Ionicons name="wallet-outline" size={size} color={color as string} />
           ),
         }}
       />
@@ -59,7 +59,7 @@ export default function TechnicianLayout() {
         options={{
           title: t("technician.profile"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+            <Ionicons name="person-outline" size={size} color={color as string} />
           ),
         }}
       />

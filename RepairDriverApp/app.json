@@ -7,11 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "repairdriverapp",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#231a73"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.repairdriver.app",
@@ -48,6 +43,15 @@
       "expo-router",
       "expo-localization",
       [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#231a73",
+          "imageWidth": 200
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "نحتاج إذن الصور لإرفاق صور المشكلة",
@@ -68,9 +72,6 @@
       "eas": {
         "projectId": "your-project-id"
       }
-    },
-    "locales": {
-      "ar": "./src/i18n/ar.ts"
     }
   }
 }
