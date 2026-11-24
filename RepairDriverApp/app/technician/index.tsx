@@ -4,412 +4,384 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  TextInput,
   Alert,
   Modal,
-  Image,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../src/components/ui/Card";
 import { Button } from "../../src/components/ui/Button";
-import { COLORS } from "../../src/lib/constants";
+import { EmptyState } from "../../src/components/ui/EmptyState";
+import { StatusBadge } from "../../src/components/ui/StatusBadge";
+import {
+  COLORS,
+  COMMISSION_RATE,
+  DEFAULT_WARRANTY_DAYS,
+  SERVICE_ICONS,
+} from "../../src/lib/constants";
+import {
+  AssignmentItem,
+  useTechnicianAssignments,
+} from "../../src/hooks/useTechnicianAssignments";
 
-interface NearbyRequest {
-  id: string;
-  service: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  customerName: string;
-  description: string;
-  distance: string;
-  urgency: "normal" | "emergency";
-  images: number;
-  location: string;
+type Tab = "new" | "active";
+
+const WARRANTY_OPTIONS = [0, 14, DEFAULT_WARRANTY_DAYS];
+
+function formatSar(amount: number) {
+  return Number.isInteger(amount) ? String(amount) : amount.toFixed(2);
 }
 
-const DEMO_REQUESTS: NearbyRequest[] = [
-  {
-    id: "1",
-    service: "كهرباء",
-    icon: "flash-outline",
-    customerName: "سارة أحمد",
-    description: "انقطاع كهرباء في غرفة المعيشة - القواطع تفصل باستمرار",
-    distance: "2.5 كم",
-    urgency: "emergency",
-    images: 3,
-    location: "الرياض، حي النرجس",
-  },
-  {
-    id: "2",
-    service: "سباكة",
-    icon: "water-outline",
-    customerName: "محمد عبدالله",
-    description: "تسريب مياه تحت المغسلة في المطبخ",
-    distance: "3.8 كم",
-    urgency: "normal",
-    images: 2,
-    location: "الرياض، حي الياسمين",
-  },
-  {
-    id: "3",
-    service: "تكييف",
-    icon: "thermometer-outline",
-    customerName: "فاطمة علي",
-    description: "مكيف سبليت لا يعمل - يصدر صوت عالي",
-    distance: "5.1 كم",
-    urgency: "normal",
-    images: 1,
-    location: "الرياض، حي الملقا",
-  },
-];
-
-type FilterType = "all" | "emergency" | "nearby" | "high_value";
-
-export default function TechnicianRadarScreen() {
+export default function TechnicianAssignmentsScreen() {
   const { t } = useTranslation();
-  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
-  const [selectedRequest, setSelectedRequest] = useState<NearbyRequest | null>(
-    null
-  );
-  const [showQuoteModal, setShowQuoteModal] = useState(false);
-  const [quotePrice, setQuotePrice] = useState("");
-  const [quoteType, setQuoteType] = useState<"direct" | "inspection">("direct");
+  const {
+    pending,
+    active,
+    loading,
+    refreshing,
+    error,
+    refresh,
+    confirm,
+    start,
+    complete,
+  } = useTechnicianAssignments();
 
-  const filters: { key: FilterType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-    { key: "all", label: t("common.all"), icon: "apps-outline" },
-    { key: "emergency", label: t("serviceRequest.emergency"), icon: "warning-outline" },
-    { key: "nearby", label: "الأقرب", icon: "location-outline" },
-    { key: "high_value", label: "قيمة عالية", icon: "trending-up-outline" },
+  const [tab, setTab] = useState<Tab>("new");
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [completing, setCompleting] = useState<AssignmentItem | null>(null);
+  const [warrantyDays, setWarrantyDays] = useState(DEFAULT_WARRANTY_DAYS);
+
+  const list = tab === "new" ? pending : active;
+
+  const run = async (id: string, action: () => Promise<void>) => {
+    setBusyId(id);
+    try {
+      await action();
+    } catch (e) {
+      const message = e instanceof Error ? e.message : (e as { message?: string })?.message;
+      Alert.alert(t("common.error"), message);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleConfirm = (item: AssignmentItem) =>
+    run(item.assignment.id, async () => {
+      await confirm(item.assignment.id);
+      Alert.alert(t("assignments.confirmedTitle"));
+      setTab("active");
+    });
+
+  const handleStart = (item: AssignmentItem) =>
+    run(item.assignment.id, async () => {
+      await start(item.request.id);
+      Alert.alert(t("assignments.startedTitle"));
+    });
+
+  const openComplete = (item: AssignmentItem) => {
+    setWarrantyDays(DEFAULT_WARRANTY_DAYS);
+    setCompleting(item);
+  };
+
+  const handleComplete = () => {
+    if (!completing) return;
+    const item = completing;
+    run(item.assignment.id, async () => {
+      const result = await complete(item.request.id, warrantyDays);
+      setCompleting(null);
+      Alert.alert(
+        t("assignments.completedTitle"),
+        t("assignments.completedDesc", {
+          commission: formatSar(result.commission ?? 0),
+          balance: formatSar(result.new_balance),
+        }) + (result.suspended ? `\n\n${t("assignments.suspendedWarning")}` : "")
+      );
+    });
+  };
+
+  const renderAction = (item: AssignmentItem) => {
+    const busy = busyId === item.assignment.id;
+    if (item.assignment.status === "pending") {
+      return (
+        <Button
+          title={t("assignments.confirm")}
+          icon="checkmark-circle-outline"
+          onPress={() => handleConfirm(item)}
+          loading={busy}
+          disabled={busyId !== null}
+          size="sm"
+        />
+      );
+    }
+    if (item.request.status === "confirmed") {
+      return (
+        <Button
+          title={t("assignments.start")}
+          icon="play-outline"
+          onPress={() => handleStart(item)}
+          loading={busy}
+          disabled={busyId !== null}
+          size="sm"
+        />
+      );
+    }
+    if (item.request.status === "in_progress") {
+      return (
+        <Button
+          title={t("assignments.complete")}
+          icon="checkmark-done-outline"
+          onPress={() => openComplete(item)}
+          loading={busy}
+          disabled={busyId !== null}
+          size="sm"
+        />
+      );
+    }
+    return null;
+  };
+
+  const renderCard = (item: AssignmentItem) => {
+    const { request, customer } = item;
+    const emergency = request.urgency === "emergency";
+    const icon = (SERVICE_ICONS[request.category] ?? SERVICE_ICONS.general) as keyof typeof Ionicons.glyphMap;
+
+    return (
+      <Card key={item.assignment.id} className="mb-3">
+        {/* Header row: badges | service */}
+        <View className="flex-row items-start">
+          <View className="gap-1.5 items-start">
+            {item.assignment.status === "confirmed" && (
+              <StatusBadge status={request.status} />
+            )}
+            {emergency && (
+              <View className="bg-danger/10 px-2 py-0.5 rounded-full">
+                <Text className="text-danger text-xs font-semibold">
+                  {t("serviceRequest.emergency")}
+                </Text>
+              </View>
+            )}
+          </View>
+          <View className="flex-1 mr-3">
+            <View className="flex-row items-center justify-end gap-2 mb-1">
+              <Text className="text-gray-800 font-bold text-base">
+                {t(`services.${request.category}`, { defaultValue: request.category })}
+              </Text>
+              <View
+                className={`w-10 h-10 rounded-xl items-center justify-center ${
+                  emergency ? "bg-danger/10" : "bg-primary/10"
+                }`}
+              >
+                <Ionicons
+                  name={icon}
+                  size={22}
+                  color={emergency ? COLORS.danger : COLORS.primary}
+                />
+              </View>
+            </View>
+            <Text className="text-gray-500 text-right text-sm" numberOfLines={3}>
+              {request.description}
+            </Text>
+          </View>
+        </View>
+
+        {/* Details */}
+        <View className="border-t border-gray-100 mt-3 pt-3 gap-2">
+          {customer && (
+            <View className="flex-row items-center justify-end gap-1.5">
+              <Text className="text-gray-600 text-sm">{customer.full_name}</Text>
+              <Ionicons name="person-outline" size={14} color={COLORS.gray[400]} />
+            </View>
+          )}
+          <View className="flex-row items-center justify-end gap-1.5">
+            <Text className="text-gray-600 text-sm" numberOfLines={1}>
+              {request.location_address}
+            </Text>
+            <Ionicons name="location-outline" size={14} color={COLORS.gray[400]} />
+          </View>
+          {request.photos.length > 0 && (
+            <View className="flex-row items-center justify-end gap-1.5">
+              <Text className="text-gray-600 text-sm">
+                {t("assignments.photos", { count: request.photos.length })}
+              </Text>
+              <Ionicons name="image-outline" size={14} color={COLORS.gray[400]} />
+            </View>
+          )}
+        </View>
+
+        {/* Price + action */}
+        <View className="flex-row items-center mt-3 gap-3">
+          <View className="flex-1">{renderAction(item)}</View>
+          <View className="items-end">
+            <Text className="text-gray-400 text-xs">{t("assignments.price")}</Text>
+            <Text className="text-primary font-bold text-lg">
+              {request.assigned_price != null
+                ? `${formatSar(request.assigned_price)} ${t("common.sar")}`
+                : t("assignments.priceNotSet")}
+            </Text>
+          </View>
+        </View>
+      </Card>
+    );
+  };
+
+  const tabs: { key: Tab; label: string; count: number }[] = [
+    { key: "active", label: t("assignments.tabActive"), count: active.length },
+    { key: "new", label: t("assignments.tabNew"), count: pending.length },
   ];
 
-  const handleOpenQuote = (request: NearbyRequest) => {
-    setSelectedRequest(request);
-    setShowQuoteModal(true);
-  };
-
-  const handleSendQuote = () => {
-    if (quoteType === "direct" && !quotePrice) {
-      Alert.alert(t("common.error"), "يرجى إدخال السعر");
-      return;
-    }
-    Alert.alert("تم الإرسال", "تم إرسال عرضك بنجاح", [
-      { text: t("common.ok"), onPress: () => setShowQuoteModal(false) },
-    ]);
-    setQuotePrice("");
-  };
+  const completingPrice = completing?.request.assigned_price ?? 0;
 
   return (
     <SafeAreaView className="flex-1 bg-background-light">
       {/* Header */}
-      <View className="bg-primary px-6 pt-4 pb-6">
+      <View className="bg-primary px-6 pt-4 pb-5">
         <Text className="text-white text-2xl font-bold text-right mb-4">
-          {t("technician.requestRadar")}
+          {t("assignments.title")}
         </Text>
-
-        {/* Search */}
-        <TouchableOpacity className="bg-white/10 rounded-xl flex-row items-center px-4 py-3">
-          <Ionicons name="options-outline" size={20} color="#fff" />
-          <Text className="flex-1 text-white/60 text-right mr-3">
-            {t("common.search")}...
-          </Text>
-          <Ionicons name="search-outline" size={20} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Map Placeholder */}
-      <View className="bg-gray-200 h-48 items-center justify-center relative">
-        <Ionicons name="map-outline" size={48} color={COLORS.gray[400]} />
-        <Text className="text-gray-400 mt-2">خريطة الطلبات القريبة</Text>
-        {/* Floating Location Button */}
-        <TouchableOpacity className="absolute bottom-3 left-3 w-10 h-10 bg-white rounded-full items-center justify-center shadow-md">
-          <Ionicons name="locate" size={22} color={COLORS.primary} />
-        </TouchableOpacity>
-        {/* Floating map pins */}
-        <View className="absolute top-8 right-20 w-10 h-10 bg-danger rounded-full items-center justify-center shadow-md">
-          <Ionicons name="flash" size={18} color="#fff" />
-        </View>
-        <View className="absolute top-20 left-16 w-10 h-10 bg-primary rounded-full items-center justify-center shadow-md">
-          <Ionicons name="water" size={18} color="#fff" />
-        </View>
-        <View className="absolute bottom-16 right-12 w-10 h-10 bg-primary rounded-full items-center justify-center shadow-md">
-          <Ionicons name="thermometer" size={18} color="#fff" />
-        </View>
-      </View>
-
-      {/* Filters */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        className="px-4 py-3"
-        contentContainerStyle={{ gap: 8 }}
-      >
-        {filters.map((filter) => (
-          <TouchableOpacity
-            key={filter.key}
-            onPress={() => setActiveFilter(filter.key)}
-            className={`flex-row items-center px-4 py-2 rounded-full gap-1.5 ${
-              activeFilter === filter.key
-                ? "bg-primary"
-                : "bg-white border border-gray-200"
-            }`}
-          >
-            <Text
-              className={`text-sm font-semibold ${
-                activeFilter === filter.key ? "text-white" : "text-gray-600"
-              }`}
-            >
-              {filter.label}
-            </Text>
-            <Ionicons
-              name={filter.icon}
-              size={16}
-              color={activeFilter === filter.key ? "#fff" : COLORS.gray[500]}
-            />
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {/* Nearby Requests */}
-      <View className="px-5 flex-row items-center justify-between mb-3">
-        <Text className="text-gray-400 text-sm">{DEMO_REQUESTS.length} طلب</Text>
-        <Text className="text-lg font-bold text-gray-800">
-          {t("technician.nearbyRequests")}
-        </Text>
-      </View>
-
-      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
-        {DEMO_REQUESTS.map((request) => (
-          <Card
-            key={request.id}
-            className="mb-3"
-            onPress={() => handleOpenQuote(request)}
-          >
-            <View className="flex-row items-start">
-              {request.urgency === "emergency" && (
-                <View className="bg-danger/10 px-2 py-0.5 rounded-full">
-                  <Text className="text-danger text-xs font-semibold">طوارئ</Text>
-                </View>
-              )}
-              <View className="flex-1 mr-3">
-                <View className="flex-row items-center justify-end gap-2 mb-1">
-                  <Text className="text-gray-800 font-bold text-base">
-                    {request.service}
-                  </Text>
+        <View className="flex-row bg-white/10 rounded-xl p-1">
+          {tabs.map(({ key, label, count }) => {
+            const selected = tab === key;
+            return (
+              <TouchableOpacity
+                key={key}
+                onPress={() => setTab(key)}
+                className={`flex-1 flex-row items-center justify-center py-2 rounded-lg gap-2 ${
+                  selected ? "bg-white" : ""
+                }`}
+              >
+                {count > 0 && (
                   <View
-                    className={`w-10 h-10 rounded-xl items-center justify-center ${
-                      request.urgency === "emergency"
-                        ? "bg-danger/10"
-                        : "bg-primary/10"
+                    className={`min-w-5 h-5 px-1.5 rounded-full items-center justify-center ${
+                      selected ? "bg-primary" : "bg-white/20"
                     }`}
                   >
-                    <Ionicons
-                      name={request.icon}
-                      size={22}
-                      color={
-                        request.urgency === "emergency"
-                          ? COLORS.danger
-                          : COLORS.primary
-                      }
-                    />
+                    <Text className="text-white text-xs font-bold">{count}</Text>
                   </View>
-                </View>
-                <Text className="text-gray-500 text-right text-sm mb-2">
-                  {request.description}
+                )}
+                <Text
+                  className={`font-semibold ${selected ? "text-primary" : "text-white/80"}`}
+                >
+                  {label}
                 </Text>
-                <View className="flex-row items-center justify-end gap-3">
-                  <View className="flex-row items-center gap-1">
-                    <Text className="text-gray-400 text-xs">
-                      {request.images} صور
-                    </Text>
-                    <Ionicons name="image-outline" size={14} color={COLORS.gray[400]} />
-                  </View>
-                  <View className="flex-row items-center gap-1">
-                    <Text className="text-gray-400 text-xs">
-                      {request.distance}
-                    </Text>
-                    <Ionicons name="location-outline" size={14} color={COLORS.gray[400]} />
-                  </View>
-                </View>
-              </View>
-            </View>
-          </Card>
-        ))}
-        <View className="h-6" />
-      </ScrollView>
-
-      {/* Quote Modal */}
-      <Modal
-        visible={showQuoteModal}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setShowQuoteModal(false)}
-      >
-        <SafeAreaView className="flex-1 bg-background-light">
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-            {/* Modal Header */}
-            <View className="px-6 py-4 flex-row items-center justify-between border-b border-gray-100">
-              <View className="w-10" />
-              <Text className="text-lg font-bold text-gray-800">
-                {t("technician.sendResponse")}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setShowQuoteModal(false)}
-                className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center"
-              >
-                <Ionicons name="close" size={22} color={COLORS.gray[600]} />
               </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+
+      {loading ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator color={COLORS.primary} size="large" />
+        </View>
+      ) : (
+        <ScrollView
+          className="flex-1 px-5 pt-4"
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={refresh}
+              tintColor={COLORS.primary}
+            />
+          }
+        >
+          {error && (
+            <Card variant="outlined" className="mb-3 border-danger/30">
+              <Text className="text-danger text-right mb-3">{error}</Text>
+              <Button
+                title={t("common.retry")}
+                variant="outline"
+                size="sm"
+                onPress={refresh}
+              />
+            </Card>
+          )}
+
+          {list.length === 0 && !error ? (
+            tab === "new" ? (
+              <EmptyState
+                icon="file-tray-outline"
+                title={t("assignments.noNew")}
+                description={t("assignments.noNewDesc")}
+              />
+            ) : (
+              <EmptyState
+                icon="construct-outline"
+                title={t("assignments.noActive")}
+                description={t("assignments.noActiveDesc")}
+              />
+            )
+          ) : (
+            list.map(renderCard)
+          )}
+          <View className="h-6" />
+        </ScrollView>
+      )}
+
+      {/* Complete job sheet */}
+      <Modal
+        visible={completing !== null}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setCompleting(null)}
+      >
+        <View className="flex-1 justify-end bg-black/40">
+          <View className="bg-white rounded-t-3xl px-6 pt-5 pb-10">
+            <View className="flex-row items-center justify-between mb-5">
+              <TouchableOpacity onPress={() => setCompleting(null)}>
+                <Ionicons name="close" size={26} color={COLORS.gray[500]} />
+              </TouchableOpacity>
+              <Text className="text-xl font-bold text-gray-800">
+                {t("assignments.completeTitle")}
+              </Text>
             </View>
 
-            {selectedRequest && (
-              <View className="px-6 py-4">
-                {/* Customer Info */}
-                <View className="flex-row items-center justify-end mb-4">
-                  <View className="items-end mr-3">
-                    <Text className="text-gray-800 font-bold text-base">
-                      {selectedRequest.customerName}
-                    </Text>
-                    <Text className="text-gray-400 text-sm">
-                      {selectedRequest.location} • {selectedRequest.distance}
-                    </Text>
-                  </View>
-                  <View className="w-12 h-12 bg-primary/10 rounded-full items-center justify-center">
-                    <Text className="text-primary font-bold text-lg">
-                      {selectedRequest.customerName.charAt(0)}
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Problem Details */}
-                <Text className="text-base font-bold text-gray-800 mb-2 text-right">
-                  {t("technician.problemDetails")}
-                </Text>
-                <Card className="mb-4">
-                  <View className="flex-row items-center justify-end gap-2 mb-2">
-                    <Text className="text-primary font-bold">
-                      {selectedRequest.service}
-                    </Text>
-                    <View className="w-8 h-8 bg-primary/10 rounded-lg items-center justify-center">
-                      <Ionicons
-                        name={selectedRequest.icon}
-                        size={18}
-                        color={COLORS.primary}
-                      />
-                    </View>
-                  </View>
-                  <Text className="text-gray-600 text-right text-sm leading-5">
-                    {selectedRequest.description}
-                  </Text>
-                </Card>
-
-                {/* Photo Placeholders */}
-                <View className="flex-row gap-2 mb-6 justify-end">
-                  {Array.from({ length: selectedRequest.images }).map((_, i) => (
-                    <View
-                      key={i}
-                      className="w-24 h-24 bg-gray-200 rounded-xl items-center justify-center"
+            <Text className="text-gray-700 font-semibold text-right mb-3">
+              {t("assignments.warranty")}
+            </Text>
+            <View className="flex-row gap-2 mb-5">
+              {WARRANTY_OPTIONS.map((days) => {
+                const selected = warrantyDays === days;
+                return (
+                  <TouchableOpacity
+                    key={days}
+                    onPress={() => setWarrantyDays(days)}
+                    className={`flex-1 py-3 rounded-xl items-center border-2 ${
+                      selected ? "border-primary bg-primary/5" : "border-gray-200 bg-white"
+                    }`}
+                  >
+                    <Text
+                      className={`font-semibold ${selected ? "text-primary" : "text-gray-600"}`}
                     >
-                      <Ionicons name="image-outline" size={28} color={COLORS.gray[400]} />
-                    </View>
-                  ))}
-                </View>
-
-                {/* Quote Options */}
-                <Text className="text-base font-bold text-gray-800 mb-3 text-right">
-                  نوع الرد
-                </Text>
-
-                {/* Direct Quote */}
-                <TouchableOpacity
-                  onPress={() => setQuoteType("direct")}
-                  className={`border-2 rounded-xl p-4 mb-3 ${
-                    quoteType === "direct"
-                      ? "border-primary bg-primary/5"
-                      : "border-gray-200 bg-white"
-                  }`}
-                >
-                  <View className="flex-row items-center justify-end gap-2 mb-2">
-                    <Text className="text-gray-800 font-bold">
-                      {t("quotes.directQuote")}
+                      {days === 0
+                        ? t("assignments.noWarranty")
+                        : t("assignments.days", { count: days })}
                     </Text>
-                    <View
-                      className={`w-5 h-5 rounded-full border-2 items-center justify-center ${
-                        quoteType === "direct"
-                          ? "border-primary"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {quoteType === "direct" && (
-                        <View className="w-3 h-3 bg-primary rounded-full" />
-                      )}
-                    </View>
-                  </View>
-                  {quoteType === "direct" && (
-                    <View className="flex-row items-center bg-gray-50 rounded-xl px-4 py-3 mt-2">
-                      <Text className="text-gray-500 text-sm">ر.س</Text>
-                      <TextInput
-                        className="flex-1 text-right text-lg font-bold text-gray-800"
-                        placeholder={t("technician.enterPrice")}
-                        placeholderTextColor={COLORS.gray[400]}
-                        value={quotePrice}
-                        onChangeText={setQuotePrice}
-                        keyboardType="numeric"
-                        style={{ writingDirection: "rtl" }}
-                      />
-                    </View>
-                  )}
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
 
-                {/* Inspection Request */}
-                <TouchableOpacity
-                  onPress={() => setQuoteType("inspection")}
-                  className={`border-2 rounded-xl p-4 mb-6 ${
-                    quoteType === "inspection"
-                      ? "border-primary bg-primary/5"
-                      : "border-gray-200 bg-white"
-                  }`}
-                >
-                  <View className="flex-row items-center justify-end gap-2 mb-1">
-                    <Text className="text-gray-800 font-bold">
-                      {t("quotes.inspectionRequest")}
-                    </Text>
-                    <View
-                      className={`w-5 h-5 rounded-full border-2 items-center justify-center ${
-                        quoteType === "inspection"
-                          ? "border-primary"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {quoteType === "inspection" && (
-                        <View className="w-3 h-3 bg-primary rounded-full" />
-                      )}
-                    </View>
-                  </View>
-                  <Text className="text-gray-500 text-right text-sm">
-                    {t("technician.inspectionFeeNote")}
-                  </Text>
-                </TouchableOpacity>
+            <View className="bg-secondary rounded-xl p-4 mb-5 flex-row items-start gap-2">
+              <Text className="flex-1 text-gray-600 text-right text-sm">
+                {t("assignments.commissionNote", {
+                  amount: formatSar(Math.round(completingPrice * COMMISSION_RATE * 100) / 100),
+                })}
+              </Text>
+              <Ionicons name="information-circle-outline" size={20} color={COLORS.primary} />
+            </View>
 
-                {/* Actions */}
-                <View className="flex-row gap-3">
-                  <View className="flex-1">
-                    <Button
-                      title={t("technician.decline")}
-                      onPress={() => setShowQuoteModal(false)}
-                      variant="outline"
-                    />
-                  </View>
-                  <View className="flex-1">
-                    <Button
-                      title={t("technician.sendResponse")}
-                      onPress={handleSendQuote}
-                    />
-                  </View>
-                </View>
-              </View>
-            )}
-          </ScrollView>
-        </SafeAreaView>
+            <Button
+              title={t("assignments.complete")}
+              icon="checkmark-done-outline"
+              onPress={handleComplete}
+              loading={completing !== null && busyId === completing.assignment.id}
+            />
+          </View>
+        </View>
       </Modal>
     </SafeAreaView>
   );

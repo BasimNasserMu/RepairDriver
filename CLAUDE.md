@@ -24,8 +24,8 @@ The platform consists of three applications:
 
 The mobile app is an early scaffold:
 - Routing, auth flow, layouts, UI components, and i18n are in place
-- Only auth/profile logic (`src/contexts/AuthContext.tsx`) talks to Supabase; customer/technician screens render static placeholder data
-- The technician home screen (`app/technician/index.tsx`) is still the old quote/inspection "radar" UI and must be rebuilt as an assignments inbox
+- Wired to Supabase: auth/profile (`src/contexts/AuthContext.tsx`) and the technician assignments inbox (`app/technician/index.tsx` via `src/hooks/useTechnicianAssignments.ts`: confirm → start → complete with warranty, live updates over Realtime)
+- All other customer/technician screens still render static placeholder data
 - Not yet implemented: Realtime chat & tracking, maps (`react-native-maps` is not installed yet), payments, reviews, push notifications, Apple/Google sign-in, admin dashboard
 
 ## Commands
@@ -47,7 +47,7 @@ There is no test runner or linter configured.
   - `app/index.tsx` — entry gate: redirects to `/auth/login` (no session) → `/auth/user-type` (no user type) → `/technician` or `/customer`
   - `app/auth/` — `login` (phone) → `otp` → `user-type`
   - `app/customer/` — tabs: `index` (home), `bookings`, `new-request`, `messages`, `profile`
-  - `app/technician/` — tabs: `index` (to become assignments inbox), `jobs`, `wallet`, `profile`
+  - `app/technician/` — tabs: `index` (assignments inbox), `jobs`, `wallet`, `profile`
 - **`src/contexts/AuthContext.tsx`** — Supabase session, `profiles` fetch, phone OTP sign-in, user type; consume via `useAuth()`
 - **`src/lib/supabase.ts`** — Supabase client (AsyncStorage session persistence), configured via `EXPO_PUBLIC_*` env vars
 - **`src/lib/constants.ts`** — color palette, `COMMISSION_RATE` (must match `complete_job()` in the DB), `NEGATIVE_WALLET_LIMIT`, `DEFAULT_WARRANTY_DAYS`, `MAX_PHOTOS`, service icons. Use these instead of hard-coding business values

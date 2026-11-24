@@ -30,9 +30,9 @@ export default function TechnicianLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: t("technician.radar"),
+          title: t("technician.inbox"),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="radio-outline" size={size} color={color as string} />
+            <Ionicons name="file-tray-outline" size={size} color={color as string} />
           ),
         }}
       />
