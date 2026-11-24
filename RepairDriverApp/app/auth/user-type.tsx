@@ -15,7 +15,7 @@ export default function UserTypeScreen() {
 
   const handleSelectType = async (type: UserType) => {
     try {
-      await updateProfile({ user_type: type });
+      await updateProfile({ role: type });
     } catch {
       // Demo mode - continue anyway
     }

@@ -84,7 +84,7 @@ export default {
     changeLocation: "تغيير الموقع",
     submitRequest: "إرسال الطلب",
     requestSent: "تم إرسال طلبك بنجاح",
-    requestSentDesc: "سيتم إشعارك عند استلام عرض سعر",
+    requestSentDesc: "سيتم إشعارك عند تعيين فني لطلبك",
   },
   quotes: {
     title: "عروض الأسعار",
@@ -121,9 +121,7 @@ export default {
   },
   status: {
     pending: "قيد الانتظار",
-    quote_received: "تم استلام العرض",
-    inspection_scheduled: "المعاينة مجدولة",
-    accepted: "مقبول",
+    confirmed: "مؤكد",
     in_progress: "جاري التنفيذ",
     completed: "مكتمل",
     cancelled: "ملغي",

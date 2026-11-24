@@ -28,7 +28,7 @@ const DEMO_BOOKINGS = [
     service: "سباكة",
     icon: "water-outline" as const,
     description: "تسريب مياه تحت المغسلة",
-    status: "quote_received" as ServiceRequestStatus,
+    status: "confirmed" as ServiceRequestStatus,
     techName: "خالد عبدالله",
     techRating: 4.7,
     price: "200 ر.س",

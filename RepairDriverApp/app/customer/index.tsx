@@ -38,7 +38,7 @@ const DEMO_ACTIVE_JOBS = [
     id: "2",
     service: "سباكة",
     description: "تسريب مياه تحت المغسلة",
-    status: "quote_received" as const,
+    status: "confirmed" as const,
     techName: "خالد عبدالله",
     techRating: 4.7,
     date: "أمس",

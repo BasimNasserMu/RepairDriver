@@ -9,9 +9,7 @@ interface StatusBadgeProps {
 
 const statusColors: Record<ServiceRequestStatus, { bg: string; text: string }> = {
   pending: { bg: "bg-yellow-100", text: "text-yellow-700" },
-  quote_received: { bg: "bg-blue-100", text: "text-blue-700" },
-  inspection_scheduled: { bg: "bg-purple-100", text: "text-purple-700" },
-  accepted: { bg: "bg-green-100", text: "text-green-700" },
+  confirmed: { bg: "bg-blue-100", text: "text-blue-700" },
   in_progress: { bg: "bg-primary/10", text: "text-primary" },
   completed: { bg: "bg-green-100", text: "text-green-700" },
   cancelled: { bg: "bg-red-100", text: "text-red-700" },

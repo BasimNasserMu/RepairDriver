@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data) {
         setProfile(data as Profile);
-        setUserType(data.user_type as UserType);
+        setUserType(data.role as UserType);
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -96,7 +96,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) throw new Error("No user");
     const { error } = await supabase
       .from("profiles")
-      .upsert({ id: user.id, ...updates });
+      .update(updates)
+      .eq("id", user.id);
     if (error) throw error;
     if (profile) {
       setProfile({ ...profile, ...updates });

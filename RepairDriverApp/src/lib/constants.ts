@@ -25,9 +25,8 @@ export const COLORS = {
   },
 } as const;
 
-export const COMMISSION_RATE = 0.1; // 10%
+export const COMMISSION_RATE = 0.15; // 15% — must match complete_job() in the DB
 export const NEGATIVE_WALLET_LIMIT = -200; // SAR
-export const DEFAULT_INSPECTION_FEE = 50; // SAR
 export const DEFAULT_WARRANTY_DAYS = 30;
 export const MAX_PHOTOS = 5;
 

@@ -29,7 +29,7 @@ const DEMO_JOBS = [
     icon: "water-outline" as const,
     customerName: "محمد عبدالله",
     description: "تسريب مياه تحت المغسلة",
-    status: "accepted" as ServiceRequestStatus,
+    status: "confirmed" as ServiceRequestStatus,
     price: "200 ر.س",
     date: "28 فبراير 2026",
     address: "الرياض، حي الياسمين",

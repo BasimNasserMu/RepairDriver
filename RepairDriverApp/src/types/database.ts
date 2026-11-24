@@ -1,75 +1,74 @@
+// Mirrors the Supabase schema (see supabase/migrations/).
+// Model: admins assign technicians to requests; technicians confirm,
+// start and complete jobs via RPC functions.
+
 export type UserType = "customer" | "technician" | "admin";
 
 export type ServiceRequestStatus =
-  | "pending"
-  | "quote_received"
-  | "inspection_scheduled"
-  | "accepted"
-  | "in_progress"
-  | "completed"
+  | "pending" // created by customer, awaiting admin assignment / technician confirmation
+  | "confirmed" // technician confirmed the assignment
+  | "in_progress" // technician started the job (start_job)
+  | "completed" // technician completed the job (complete_job)
   | "cancelled";
 
-export type QuoteStatus = "pending" | "accepted" | "rejected";
+export type AssignmentStatus = "pending" | "confirmed";
+
+export type Urgency = "normal" | "emergency";
 
 export type PaymentMethod = "cash" | "apple_pay" | "mada";
 
-export type PaymentStatus = "pending" | "completed" | "failed";
+export type WalletTransactionType = "commission" | "cancellation_fee" | (string & {});
 
 export interface Profile {
   id: string;
-  user_type: UserType;
   full_name: string;
-  phone: string;
-  email?: string;
-  avatar_url?: string;
-  is_verified: boolean;
-  rating?: number;
-  completed_jobs?: number;
+  phone: string | null;
+  avatar_url: string | null;
+  role: UserType;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface ServiceCategory {
+export interface Service {
   id: string;
-  name_ar: string;
-  name_en: string;
-  icon: string;
+  category: string;
+  name: string;
+  description: string;
+  starting_price: number;
   is_active: boolean;
+  display_order: number;
+  created_at: string;
 }
 
 export interface ServiceRequest {
   id: string;
   customer_id: string;
-  service_id: string;
+  service_id: string | null;
+  category: string;
   description: string;
-  images_urls: string[];
+  photos: string[];
+  urgency: Urgency;
   status: ServiceRequestStatus;
-  urgency: "normal" | "emergency";
-  latitude?: number;
-  longitude?: number;
-  address?: string;
-  cancellation_reason?: string;
-  warranty_days?: number;
+  location_address: string;
+  location_lat: number;
+  location_lng: number;
+  /** Set by admin; customers cannot change it. */
+  assigned_price: number | null;
+  assigned_by: string | null;
   created_at: string;
   updated_at: string;
-  // Joined fields
-  service?: ServiceCategory;
-  customer?: Profile;
-  quotes?: Quote[];
 }
 
-export interface Quote {
+export interface Assignment {
   id: string;
   request_id: string;
   technician_id: string;
-  is_inspection_request: boolean;
-  inspection_fee?: number;
-  price?: number;
-  status: QuoteStatus;
-  notes?: string;
-  created_at: string;
-  // Joined fields
-  technician?: Profile;
+  status: AssignmentStatus;
+  notes: string | null;
+  assigned_by: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface Message {
@@ -77,19 +76,17 @@ export interface Message {
   request_id: string;
   sender_id: string;
   content: string;
-  image_url?: string;
+  read_at: string | null;
   created_at: string;
-  // Joined fields
-  sender?: Profile;
 }
 
 export interface Payment {
   id: string;
   request_id: string;
   amount: number;
-  payment_method: PaymentMethod;
-  status: PaymentStatus;
-  commission_amount: number;
+  commission: number;
+  method: PaymentMethod;
+  paid_at: string | null;
   created_at: string;
 }
 
@@ -99,18 +96,68 @@ export interface Review {
   customer_id: string;
   technician_id: string;
   rating: number;
-  comment?: string;
+  comment: string | null;
   created_at: string;
-  // Joined fields
-  customer?: Profile;
+}
+
+export interface SavedLocation {
+  id: string;
+  customer_id: string;
+  label: string;
+  address: string;
+  lat: number;
+  lng: number;
+  is_default: boolean;
+  created_at: string;
+}
+
+export interface TechnicianDocument {
+  id: string;
+  technician_id: string;
+  type: string;
+  url: string;
+  verified: boolean;
+  created_at: string;
+}
+
+export interface TechnicianLocation {
+  technician_id: string;
+  lat: number;
+  lng: number;
+  updated_at: string;
+}
+
+export interface Wallet {
+  id: string;
+  technician_id: string;
+  balance: number;
+  updated_at: string;
 }
 
 export interface WalletTransaction {
   id: string;
+  wallet_id: string;
   technician_id: string;
+  type: WalletTransactionType;
   amount: number;
-  type: "earning" | "commission" | "top_up" | "settlement";
-  description: string;
-  reference_id?: string;
+  description: string | null;
   created_at: string;
+}
+
+export interface Warranty {
+  id: string;
+  request_id: string;
+  warranty_days: number;
+  expires_at: string;
+  created_at: string;
+}
+
+/** Return shape of the complete_job / apply_cancellation_fee RPCs. */
+export interface WalletChargeResult {
+  success: boolean;
+  new_balance: number;
+  suspended: boolean;
+  amount?: number;
+  commission?: number;
+  fee?: number;
 }

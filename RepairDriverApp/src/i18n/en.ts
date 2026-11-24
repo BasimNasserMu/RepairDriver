@@ -84,7 +84,7 @@ export default {
     changeLocation: "Change Location",
     submitRequest: "Submit Request",
     requestSent: "Request Sent Successfully",
-    requestSentDesc: "You'll be notified when you receive a quote",
+    requestSentDesc: "You'll be notified when a technician is assigned",
   },
   quotes: {
     title: "Quotes",
@@ -121,9 +121,7 @@ export default {
   },
   status: {
     pending: "Pending",
-    quote_received: "Quote Received",
-    inspection_scheduled: "Inspection Scheduled",
-    accepted: "Accepted",
+    confirmed: "Confirmed",
     in_progress: "In Progress",
     completed: "Completed",
     cancelled: "Cancelled",
