@@ -4,15 +4,15 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
-import { Card } from "../../src/components/ui/Card";
 import { ServiceIcon } from "../../src/components/ui/ServiceIcon";
-import { StatusBadge } from "../../src/components/ui/StatusBadge";
+import { EmptyState } from "../../src/components/ui/EmptyState";
+import { CustomerRequestCard } from "../../src/components/CustomerRequestCard";
+import { useCustomerRequests } from "../../src/hooks/useCustomerRequests";
 import { COLORS } from "../../src/lib/constants";
 
 const SERVICES = [
@@ -24,30 +24,10 @@ const SERVICES = [
   { id: "6", key: "cleaning", icon: "sparkles-outline" as const },
 ];
 
-const DEMO_ACTIVE_JOBS = [
-  {
-    id: "1",
-    service: "تكييف",
-    description: "صيانة مكيف سبليت - لا يبرد",
-    status: "in_progress" as const,
-    techName: "أحمد محمد",
-    techRating: 4.9,
-    date: "اليوم",
-  },
-  {
-    id: "2",
-    service: "سباكة",
-    description: "تسريب مياه تحت المغسلة",
-    status: "confirmed" as const,
-    techName: "خالد عبدالله",
-    techRating: 4.7,
-    date: "أمس",
-  },
-];
-
 export default function CustomerHomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { active, loading } = useCustomerRequests();
 
   return (
     <SafeAreaView className="flex-1 bg-background-light">
@@ -135,7 +115,7 @@ export default function CustomerHomeScreen() {
 
           {/* Active Jobs */}
           <View className="flex-row items-center justify-between mb-4">
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/customer/bookings")}>
               <Text className="text-primary text-sm font-semibold">
                 {t("customer.viewAll")}
               </Text>
@@ -145,33 +125,17 @@ export default function CustomerHomeScreen() {
             </Text>
           </View>
 
-          {DEMO_ACTIVE_JOBS.map((job) => (
-            <Card key={job.id} className="mb-3" onPress={() => {}}>
-              <View className="flex-row items-start justify-between">
-                <StatusBadge status={job.status} />
-                <View className="flex-1 mr-3">
-                  <Text className="text-gray-800 font-bold text-right text-base mb-1">
-                    {job.service}
-                  </Text>
-                  <Text className="text-gray-500 text-right text-sm mb-2">
-                    {job.description}
-                  </Text>
-                  <View className="flex-row items-center justify-end gap-2">
-                    <Text className="text-gray-600 text-sm">{job.techName}</Text>
-                    <View className="flex-row items-center gap-1">
-                      <Text className="text-yellow-500 text-sm font-semibold">
-                        {job.techRating}
-                      </Text>
-                      <Ionicons name="star" size={14} color="#eab308" />
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View className="flex-row items-center justify-end mt-3 pt-3 border-t border-gray-100">
-                <Text className="text-gray-400 text-xs">{job.date}</Text>
-              </View>
-            </Card>
-          ))}
+          {loading ? null : active.length === 0 ? (
+            <EmptyState
+              icon="construct-outline"
+              title={t("customer.noActiveJobs")}
+              description={t("requests.noRequestsDesc")}
+            />
+          ) : (
+            active
+              .slice(0, 3)
+              .map((item) => <CustomerRequestCard key={item.request.id} item={item} />)
+          )}
 
           <View className="h-6" />
         </View>

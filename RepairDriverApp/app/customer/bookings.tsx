@@ -1,73 +1,61 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../src/components/ui/Card";
-import { StatusBadge } from "../../src/components/ui/StatusBadge";
+import { Button } from "../../src/components/ui/Button";
 import { EmptyState } from "../../src/components/ui/EmptyState";
+import { CustomerRequestCard } from "../../src/components/CustomerRequestCard";
 import { COLORS } from "../../src/lib/constants";
-import { ServiceRequestStatus } from "../../src/types/database";
+import {
+  CustomerRequestItem,
+  useCustomerRequests,
+} from "../../src/hooks/useCustomerRequests";
 
 type TabFilter = "all" | "active" | "completed";
 
-const DEMO_BOOKINGS = [
-  {
-    id: "1",
-    service: "تكييف",
-    icon: "thermometer-outline" as const,
-    description: "صيانة مكيف سبليت - لا يبرد",
-    status: "in_progress" as ServiceRequestStatus,
-    techName: "أحمد محمد",
-    techRating: 4.9,
-    price: "150 ر.س",
-    date: "1 مارس 2026",
-  },
-  {
-    id: "2",
-    service: "سباكة",
-    icon: "water-outline" as const,
-    description: "تسريب مياه تحت المغسلة",
-    status: "confirmed" as ServiceRequestStatus,
-    techName: "خالد عبدالله",
-    techRating: 4.7,
-    price: "200 ر.س",
-    date: "28 فبراير 2026",
-  },
-  {
-    id: "3",
-    service: "كهرباء",
-    icon: "flash-outline" as const,
-    description: "تركيب ثريا في غرفة المعيشة",
-    status: "completed" as ServiceRequestStatus,
-    techName: "فهد سعد",
-    techRating: 4.8,
-    price: "85 ر.س",
-    date: "25 فبراير 2026",
-  },
-  {
-    id: "4",
-    service: "دهان",
-    icon: "color-palette-outline" as const,
-    description: "دهان غرفة نوم رئيسية",
-    status: "completed" as ServiceRequestStatus,
-    techName: "محمد علي",
-    techRating: 4.6,
-    price: "500 ر.س",
-    date: "20 فبراير 2026",
-  },
-];
-
 export default function BookingsScreen() {
   const { t } = useTranslation();
+  const { items, active, loading, refreshing, error, refresh, cancel } =
+    useCustomerRequests();
   const [activeTab, setActiveTab] = useState<TabFilter>("all");
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
-  const filteredBookings = DEMO_BOOKINGS.filter((booking) => {
-    if (activeTab === "active")
-      return !["completed", "cancelled"].includes(booking.status);
-    if (activeTab === "completed") return booking.status === "completed";
-    return true;
-  });
+  const filtered =
+    activeTab === "active"
+      ? active
+      : activeTab === "completed"
+      ? items.filter((i) => i.request.status === "completed")
+      : items;
+
+  const handleCancel = (item: CustomerRequestItem) => {
+    Alert.alert(t("requests.cancelTitle"), t("requests.cancelConfirm"), [
+      { text: t("common.no"), style: "cancel" },
+      {
+        text: t("requests.cancelRequest"),
+        style: "destructive",
+        onPress: async () => {
+          setCancellingId(item.request.id);
+          try {
+            await cancel(item.request.id);
+          } catch (e) {
+            const message = e instanceof Error ? e.message : (e as { message?: string })?.message;
+            Alert.alert(t("common.error"), message);
+          } finally {
+            setCancellingId(null);
+          }
+        },
+      },
+    ]);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background-light">
@@ -103,57 +91,48 @@ export default function BookingsScreen() {
         ))}
       </View>
 
-      {/* Bookings List */}
-      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
-        {filteredBookings.length === 0 ? (
-          <EmptyState
-            icon="calendar-outline"
-            title={t("customer.noActiveJobs")}
-          />
-        ) : (
-          filteredBookings.map((booking) => (
-            <Card key={booking.id} className="mb-3" onPress={() => {}}>
-              <View className="flex-row items-start">
-                <StatusBadge status={booking.status} />
-                <View className="flex-1 mr-3">
-                  <View className="flex-row items-center justify-end gap-2 mb-1">
-                    <Text className="text-gray-800 font-bold text-base">
-                      {booking.service}
-                    </Text>
-                    <View className="w-8 h-8 bg-primary/10 rounded-lg items-center justify-center">
-                      <Ionicons
-                        name={booking.icon}
-                        size={18}
-                        color={COLORS.primary}
-                      />
-                    </View>
-                  </View>
-                  <Text className="text-gray-500 text-right text-sm mb-2">
-                    {booking.description}
-                  </Text>
-                </View>
-              </View>
-
-              <View className="flex-row items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                <Text className="text-primary font-bold">{booking.price}</Text>
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-gray-600 text-sm">{booking.techName}</Text>
-                  <View className="flex-row items-center gap-0.5">
-                    <Text className="text-yellow-500 text-xs font-semibold">
-                      {booking.techRating}
-                    </Text>
-                    <Ionicons name="star" size={12} color="#eab308" />
-                  </View>
-                </View>
-              </View>
-              <Text className="text-gray-400 text-xs text-right mt-2">
-                {booking.date}
-              </Text>
+      {loading ? (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator color={COLORS.primary} size="large" />
+        </View>
+      ) : (
+        <ScrollView
+          className="flex-1 px-5"
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={refresh}
+              tintColor={COLORS.primary}
+            />
+          }
+        >
+          {error && (
+            <Card variant="outlined" className="mb-3 border-danger/30">
+              <Text className="text-danger text-right mb-3">{error}</Text>
+              <Button title={t("common.retry")} variant="outline" size="sm" onPress={refresh} />
             </Card>
-          ))
-        )}
-        <View className="h-6" />
-      </ScrollView>
+          )}
+
+          {filtered.length === 0 && !error ? (
+            <EmptyState
+              icon="calendar-outline"
+              title={activeTab === "all" ? t("requests.noRequests") : t("customer.noActiveJobs")}
+              description={activeTab === "all" ? t("requests.noRequestsDesc") : undefined}
+            />
+          ) : (
+            filtered.map((item) => (
+              <CustomerRequestCard
+                key={item.request.id}
+                item={item}
+                onCancel={handleCancel}
+                cancelling={cancellingId === item.request.id}
+              />
+            ))
+          )}
+          <View className="h-6" />
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

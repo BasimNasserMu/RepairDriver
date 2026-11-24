@@ -16,7 +16,7 @@ The platform consists of three applications:
 ## Repository Layout
 
 - `RepairDriver.md` — Product requirements (PRD), including the data model summary (Section 6)
-- `supabase/migrations/` — SQL migrations; the source of truth for the database. The baseline schema was created in the Supabase dashboard and is not in the repo yet; migrations here apply on top of it
+- `supabase/migrations/` — SQL migrations (apply in filename order); the source of truth for the database. The baseline schema was created in the Supabase dashboard and is not in the repo yet; migrations here apply on top of it
 - `ProposedScreens/` — HTML + PNG design mockups for key screens; use as visual reference when building UI
 - `RepairDriverApp/` — Expo app containing both the customer and technician experiences
 
@@ -25,7 +25,8 @@ The platform consists of three applications:
 The mobile app is an early scaffold:
 - Routing, auth flow, layouts, UI components, and i18n are in place
 - Wired to Supabase: auth/profile (`src/contexts/AuthContext.tsx`) and the technician assignments inbox (`app/technician/index.tsx` via `src/hooks/useTechnicianAssignments.ts`: confirm → start → complete with warranty, live updates over Realtime)
-- All other customer/technician screens still render static placeholder data
+- Customer: new request (`app/customer/new-request.tsx` → `src/lib/requests.ts`: photos from camera/library uploaded to the private `request-photos` bucket, GPS location + reverse geocode), bookings list and home active jobs (`src/hooks/useCustomerRequests.ts`, live updates, cancel)
+- Still placeholder data: customer/technician messages, profiles, technician jobs history and wallet
 - Not yet implemented: Realtime chat & tracking, maps (`react-native-maps` is not installed yet), payments, reviews, push notifications, Apple/Google sign-in, admin dashboard
 
 ## Commands
@@ -89,6 +90,10 @@ Key relationships:
 ## Testing database changes
 
 There is no Supabase CLI link yet. To test a migration, run it against a throwaway local Postgres with mocked `auth.uid()`/`auth.role()`, `anon`/`authenticated` roles and a copy of the current schema, then exercise policies with `set role authenticated` + `set_config(request.jwt.claim.sub, ...)`. Apply to the live project via the dashboard SQL editor.
+
+## Storage
+
+- `request-photos` (private): objects at `<customer_id>/<random>.<ext>`; `service_requests.photos` stores these paths, not URLs. Read them with `createSignedUrl`. Visible to the owner, technicians assigned to a request referencing the path, and admins. A DB guard rejects requests whose photo paths are outside the customer's folder
 
 ## Business Rules
 
